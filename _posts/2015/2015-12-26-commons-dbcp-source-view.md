@@ -1,0 +1,48 @@
+---
+layout: post
+comments: true
+title: "从commons-dbcp源码学习设计思路"
+description: "从commons-dbcp源码学习设计思路"
+categories: ["commons-dbcp", "源码", "设计"]
+---
+
+由于整个连接池的性能是由commons-pool决定的，有空再讲解一下commons-pool的实现，特别是1.x和2.x的区别。  
+此次分析的是commons-dbcp 1.x源码，对应commons-pool 1.x版本。
+
+### commons-dbcp怎样与commons-pool集成?
+
+![commons-dbcp怎样与commons-pool集成](http://www.plantuml.com/plantuml/png/ZLDDIyD04BttLonuKIG5FHOlVg171RtBTZEMQBjRDgiYAYYeg6WHh60L_415JqMXY2ZIFzDcuxzmavHcqut5Is5dthoyD_DQncG55m0HHYaGuJ1gsLXWbwro0cWpWv131V0bh5vJgZ4VDn0QBe2Ox0uE3gdYTaRza29sNJI1NOSOCmDQ9VvIr9e12jmXi_bbnJZ7M56J5JoJ_475eGNZ2vOslrZMnc8d6gBZ9CyuP-jHFJIYQXp4AgV9MZQRZNrgD6DRbeKC_IcOyJocDgDWQoW5qro4i9xbfI0C-mhJktAMXaCvr7wkUaUNygjcDFt6hTzuK5JcM42ckScXrdTJLby8AvKOTQrWqtxpshy_aLyDx_WnS4MP08HTj30QRa-XMvyLMR-NPmT-yyQhF7blT_9gJnw_Upkx2WBK3cSoQhrbCvdgTeBnZPvO1cfmlWYHjcaDe-vLmYkGlA0Dhk1ieyzPutW5j770azIMsLWCj7OU_utYN_J3X0CMaFRtCaV2G4nnPmsuqUpSqjnGDqMfBfFHLRTdVJQIGz4vrItRzPkVshwitdg7PxBwra5qO_M7IDINFn6b4IDAtiMhTrflVvxRVCq1tlgeTDL4EXB9-WK0)
+
+
+如上图所示，集成commons-dbcp的时候采用BasicDataSource这个实现类，它的实际功能是交给PoolingDataSource的(内部是通过commons-pool来管理连接对象)。  
+不过,我不是很理解为什么要这么设计?
+
+### commons-dbcp的连接有什么特别?
+
+![commons-dbcp的连接有什么特别](http://www.plantuml.com/plantuml/png/bLB1Ji905Bpp5Vi1zk3LU9FeJKqyU3HBknAaR4cx78oIO1Gvg8K3YA826XMYCGL99226d-6rvI_S5WieJGpNDszctink78jH72P8L2Wb8eieL928JCAOHMWO7GGGMXaZQFbG451m34yGlkOt7X4s5KLUIs1LcW3RAex7YVelRJuJ79B9r7g04oAK4NKNYsGwXfCgwQ2YZ3NDNzJPGKW8SLc2ATeHPKKZaaUa2YC8QsXzqLtpKrXo4UGnhNnzqDNDQiOsJa6lGEtCAfqufPjN1kIUeVrkVMOXtHeMtrpYJ7fF3tBdPhLjvPkpYLUno1Hrdml7S9HiXFRuUD2jMVdA0cHVuBOElHJa38rXHcA4CZ0wTlFUR5Ovmon-GEeQCbrBRumF-2tlNJ2ljrk0UTanMuL1hmIDEziesFqyt9IvzTZB_uVyyUID1373Mqf25ScFl7ty1O-LuL4VqXUynb67_0wxNpRr9_lXrJOCtZuN8bHoNowG_0O0)
+
+连接这种对象有点特殊的，所以commons-dbcp提供了一些connection方面的增强特性。例如:
+
+* PoolGuardConnectionWrapper是最终客户端拿到的对象，能够防止多次关闭等误操作
+* PoolableConnection是PoolGuardConnectionWrapper内部的对象，可以结合pool进行管理，最大的优势就是可以保留客户端代码无需任何改动。**实际上，很多自带生命周期api的对象，一旦池化之后都会考虑这么设计。**
+* PoolingConnection是开启statement pool的时候PoolableConnection的内部对象，内部采用一个KeyedObjectPool进行管理(key主要是通过执行的sql语句来生成的)。不过这种对象一般不需要池化
+
+### 如何优化Connection、Statement、ResultSet的生命周期管理?
+
+jdbc的api有个非常烦人的地方，就是每个Connection、Statement、ResultSet对象都是需要关闭。所以写起来代码繁琐的，很多人就跳过这些健壮性代码。  
+我研究了一下dbcp的实现，发现它能够发现未关闭的Statement、ResultSet对象，并在适当的时候进行关闭。
+
+![如何优化生命周期管理](http://www.plantuml.com/plantuml/png/bP6n2W8n44Jx-uebfP32taQyKXlF7rXpGmZ6ZPYrqljtSmUAo4cm6uPvo-pkXTs9FSWb4JWDIImVMVeawArUsO7k3T7wvHqcQ_Mmbbf4UDOWVlE6gz5EMN66Q3MvHxv5xL1FjgobSyOEogDk2Z5NZipIK2geMPWVbVx0FllD3AjI1NEHS_vURZmtaTs6h3GzO5J56vhX2G00)
+
+具体实现思路是这样的:
+
+* 需要实现生命周期管理的对象需要继承AbandonedTrace，这包括了DelegatingStatement、DelegatingResultSet、DelegatingConnection等
+* 通过DelegatingConnection生成的statement、resultset等都是带Delegating的，也就是带trace特性的。
+* 对于上图，有个特别的是DelegatingConnection的trace可能包括ResultSet，这个主要由DelegatingDatabaseMetaData产生的。因为metadata的查询不需要先有statement。
+* 处理流程调用connection.close(), 会返回到池中(见PoolableConnection)， 触发PoolableConnectionFactory的passivateObject(commons-pool的内置回调)，最后触发DelegatingConnection的passivate，在这里会递归检查所有的trace。
+* 注意的是，DelegatingConnection的close方法除了触发trace对象的关闭，还会关闭底层的连接对象。
+
+
+
+
+

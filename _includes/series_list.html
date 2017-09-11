@@ -1,0 +1,15 @@
+{% assign series = site.categories.[series_list] %}
+{% if series.size > 0 %}
+<h2>"{{ series_list }}"系列文章:</h2>
+<ul>
+{% for node in series reversed %} 
+  {% if page.url == node.url %}
+  <li>{{ node.date | date: "%Y-%m-%d"}} {{node.title}}</li>
+  {% else %}
+  <li><a href="{{node.url}}">{{ node.date | date: "%Y-%m-%d" }} {{node.title}}</a></li>
+  {% endif %}
+{% endfor %}
+</ul>
+{% endif %}
+{% assign series = nil %}
+{% assign series_list = nil %}

@@ -1,1 +1,58 @@
+url: http://mccxj.github.io
+title: 小毛的胡思乱想
+subtitle: 凡走过,必留痕迹.
+author: 蔡晓建
+email: mc02cxj@gmail.com
+description: ""
+date_format: "ordinal"
+
+github: [metadata]
+repository: mccxj/mccxj.github.io
+encoding: UTF-8
+future: true
+jailed: false
 theme: jekyll-theme-cayman
+gfm_quirks: paragraph_end
+lsi: false
+safe: true
+incremental: false
+highlighter: rouge
+gist:
+  noscript: false
+kramdown:
+  math_engine: mathjax
+  syntax_highlighter: rouge
+  input: GFM
+  hard_wrap: false
+
+paginate: 5          # Posts per page on the blog index
+paginate_path: "/blog/page:num/"
+recent_posts: 10       # Posts in the sidebar Recent Posts section
+excerpt_link: "Read on &rarr;"  # "Continue reading" link text at the bottom of excerpted articles
+
+titlecase: true       # Converts page and post titles to titlecase
+
+root: /
+permalink: /blog/:year:month:day_:title.html
+#source: source
+#destination: public
+#markdown: rdiscount
+#highlighter: true
+plugins:
+   - jekyll-coffeescript
+   - jekyll-gist
+   - jekyll-github-metadata
+   - jekyll-paginate
+   - jekyll-relative-links
+   - jekyll-optional-front-matter
+   - jekyll-readme-index
+   - jekyll-default-layout
+   - jekyll-titles-from-headings
+   - jekyll-feed
+   - jekyll-redirect-from
+   - jekyll-seo-tag
+   - jekyll-sitemap
+   - jekyll-avatar
+   - jemoji
+   - jekyll-mentions
+   - jekyll-include-cache
