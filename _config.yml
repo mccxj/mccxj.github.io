@@ -56,3 +56,8 @@ plugins:
    - jemoji
    - jekyll-mentions
    - jekyll-include-cache
+
+default_asides: [asides/recent_posts.html]
+# Disqus Comments
+disqus_short_name: mccxj
+disqus_show_comment_count: true
