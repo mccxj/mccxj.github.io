@@ -37,7 +37,5 @@ terrors, trace, sqlerror
 
 ### 错误链的使用
 
-类似java那样带错误链的功能，可以看到更底层的错误信息。
-
-
-介绍trace机制，errors的
+类似java那样，可以包装成另外一个往外抛，最终形成一个错误链，不会丢掉原始的异常信息。原生的error机制太简单了，tidb采用了一个开源库帮忙，https://github.com/juju/errors
+通过errors.Trace(err)返回一个包装过的错误或者nil,并且允许通过errors.Cause(err)得到原始的错误，非常方便。
