@@ -18,3 +18,8 @@ categories: ["tidb", "ast", "学习", "源码"]
 ## 函数调用 functions.go
 分别为聚合函数，普通函数，转换函数
 ![函数调用](http://www.plantuml.com/plantuml/png/IolDI_RBJqbLiAdHrLLmJ4ylIarFB4br0mgxLXGKSQMXo8E4dHDpSd1A5PU0f000)
+
+## DML语句 dml.go
+
+dml语句类型
+![dml语句类型](http://www.plantuml.com/plantuml/png/Iyv9B2vMS4dDIIr93Ix9BL6miL580VDUh5_xj7-fWfqTLqfkZbz-Igg2JOskBf9IhcImNi-yujIY4fZUJ30FXrw4KgZUqBpC_3oOrb8G1uTEk4AOneAKH8I3Iy4yN5hXIg5wWu4-I8Oxk1ZCmw4NeHIcDoE_7AuJoCQb3weCgiidFp759R4a4QOp1yXN0Beg4OTsPFK0)
