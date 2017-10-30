@@ -65,3 +65,11 @@ dml语句还有不少内部结构，简单分类一下:
 条件相关部分,就不解释了
 
 ![条件](http://www.plantuml.com/plantuml/png/AqXCpavCJrMevb9GICv9B2vMSAhqB4dDLR2nKSWlIaajKaYgr4yloYyj03AUJkXxENVHo-OLJplQ5Epiu5hSGV9EbSuvYQN5gI2TS0qTRSztjo0hzKWioynBHwZC0FDVh5_xj7yfiZgVpDpC4f227103QCxBXLkHvVr1RaEs4kROPtsJdkxg1ocj1G00)
+
+## DDL语句 ddl.go
+
+## 表达式语句 expression.go
+
+## 函数 functions.go
+
+## 系统管理语句 misc.go
