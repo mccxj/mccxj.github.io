@@ -25,3 +25,9 @@ categories: ["tidb", "ast", "学习", "源码"]
 dml语句类型
 
 ![dml语句类型](http://www.plantuml.com/plantuml/png/Iyv9B2vMS4dDIIr93Ix9BL6miL580VDUh5_xj7-fWfqTLqfkZbz-Igg2JOskBf9IhcImNi-yujIY4fZUJ30FXrw4KgZUqBpC_3oOrb8G1uTEk4AOneAKH8I3Iy4yN5hXIg5wWu4-I8Oxk1ZCmw4NeHIcDoE_7AuJoCQb3weCgiidFp759R4a4QOp1yXN0Beg4OTsPFK0)
+
+dml语句还有不少内部结构，简单分类一下:
+
+字段相关部分,其中WildCardField是一种特殊的SelectField,FieldList包括多个SelectField
+
+![字段](http://www.plantuml.com/plantuml/png/AqXCpavCJrMevb9GICv9B2vMS2mkpapFoqtDAr6miL4eJYrvicFjq_KxdysVy6J7ggThfpzRj_N5rkwd3NjUDgzusj6cO6S7rngUcPFYd5YKufQPcfC2qgtrVazFefxMyxMTJtSiUzamwsLhx_Croo2686iCJir9JIw1QtisV-cBzOiWodIUzhG-wru3r_oueV75mXKlzkrxkgSVo8Oe0bcmTn5G1DbGi74-cSLGVu1i07hb-QmMPED16ce1)
