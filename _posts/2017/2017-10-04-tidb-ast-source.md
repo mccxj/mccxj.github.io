@@ -20,6 +20,32 @@ categories: ["tidb", "ast", "学习", "源码"]
 
 ![函数调用](http://www.plantuml.com/plantuml/png/IolDI_RBJqbLiAdHrLLmJ4ylIarFB4br0mgxLXGKSQMXo8E4dHDpSd1A5PU0f000)
 
+## 可视化AST
+
+为了方便理解AST，需要有个简单的可视化工具。
+```
+type astViewer struct {
+	level int
+}
+
+// Enter implements ast.Visitor interface.
+func (av *astViewer) Enter(inNode ast.Node) (outNode ast.Node, skipChildren bool) {
+	strings.Repeat("  ", av.level)
+	fmt.Println(reflect.TypeOf(inNode))
+	av.level++
+	return inNode, false
+}
+
+// Leave implements ast.Visitor interface.
+func (av *astViewer) Leave(inNode ast.Node) (node ast.Node, ok bool) {
+	av.level--
+	return inNode, true
+}
+
+// How to use it.
+node.Accept(&astViewer{})
+```
+
 ## DML语句 dml.go
 
 dml语句类型
