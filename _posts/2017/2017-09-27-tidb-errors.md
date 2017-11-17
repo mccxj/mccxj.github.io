@@ -34,6 +34,7 @@ type Error struct {
 ErrClassToMySQLCodes map[ErrClass](map[ErrCode]uint16)
 terrors, trace, sqlerror
 ```
+从上面的结构可以看出，对于一个Error对象，根据ErrClass和ErrCode是可以对应到一个mysql的错误码的。
 
 ### 错误链的使用
 
