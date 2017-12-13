@@ -68,6 +68,8 @@ dml语句还有不少内部结构，简单分类一下:
 
 ## DDL语句 ddl.go
 
+![ddl](http://www.plantuml.com/plantuml/png/SoWkIImgAStDuKhEIImkLd0kIaqiINL9B4bCIYnE3Ix9BR6nKNZQCVlfxbtFfcvurhlkwQx92dPsN2ukFdxvAQaADZMwkbWqGKrpASelm31hmSkPIt2RXQu5nLqXYKavg8vwiN053kV0rK9DSCmfIIs22oe0JNYoVzspAJkncO2g5iapAFeXNi6c7qKfYWyyyr9IAr1yy7pBegTxfkBm15mvaXjGZG0v0OSHA8gX1WIbvYNcfg9uusLxxzE9UvzEwCNc4pJrK5D2Yahpaf7366JEinsjprTYZH0CvIX14fQPMeuQfylRdixUXoD4OAgv75BpKe3f5W00)
+
 ## 表达式语句 expression.go
 
 ## 函数 functions.go
