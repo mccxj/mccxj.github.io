@@ -62,15 +62,15 @@ file locks                      (-x) unlimited
 
 ```
 max memory size - 最大内存限制，在64位系统上通常都设置成unlimited  
-max user processes - 每用户最大进程(包括线程) 
+max user processes - 每用户总的最大进程数(包括线程) 
 virtual memory - 虚拟内存限制，在64位系统上通常都设置成unlimited 
 ```
 
-这些参数可以通过ulimit命令(临时生效)或者配置文件/etc/security/limits.conf(永久生效)进行修改。
+这些参数可以通过ulimit命令(当前用户临时生效)或者配置文件/etc/security/limits.conf(永久生效)进行修改。
 
 * 参数sys.kernel.threads-max限制
 
-表示系统全局的线程数限制。设置方式有:
+表示系统全局的总线程数限制。设置方式有:
 
 ```
 # 方式1 运行时限制,临时生效
@@ -81,7 +81,7 @@ sys.kernel.threads-max = 999999
 
 * 参数sys.kernel.pid_max限制
 
-表示系统全局的PID号的限制。设置方式有:
+表示系统全局的PID号数值的限制。设置方式有:
 
 ```
 # 方式1 运行时限制,临时生效
@@ -92,7 +92,7 @@ sys.kernel.pid_max = 999999
 
 * 参数sys.vm.max_map_count限制
 
-表示系统全局的PID号的限制。设置方式有:
+表示单个程序所能使用虚拟内存映射数量的限制。设置方式有:
 
 ```
 # 方式1 运行时限制,临时生效
@@ -100,3 +100,13 @@ echo 999999 > /proc/sys/vm/max_map_count
 # 方式2 修改/etc/sysctl.conf，永久生效
 sys.vm.max_map_count = 999999
 ```
+
+在其他资源可用的情况下，单个vm能开启的最大线程数是这个值的一半。
+
+```
+Attempt to protect stack guard pages failed.
+and OpenJDK 64-Bit Server VM warning: Attempt to deallocate stack guard pages failed. error messages are emitted
+by JavaThread::create_stack_guard_pages(), and it calls os::guard_memory(). 
+In Linux, this function is mprotect(). 
+```
+
