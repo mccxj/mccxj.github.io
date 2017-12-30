@@ -114,16 +114,12 @@ In Linux, this function is mprotect().
 
 例如suse sp2的发行说明，见https://www.suse.com/releasenotes/x86_64/SUSE-SLES/12-SP2/#fate-320358
 
-```
+>
 If you notice regressions, you can change a number of TasksMax settings.
-
 To control the default TasksMax= setting for services and scopes running on the system, use the system.conf setting DefaultTasksMax=. This setting defaults to 512, which means services that are not explicitly configured otherwise will only be able to create 512 processes or threads at maximum.
-
 For thread- or process-heavy services, you may need to set a higher TasksMax value. In such cases, set TasksMax directly in the specific unit files. Either choose a numeric value or even infinity.
-
 Similarly, you can limit the total number of processes or tasks each user can own concurrently. To do so, use the logind.conf setting UserTasksMax (the default is 12288).
-
 nspawn containers now also have a TasksMax value set, with a default of 16384.
-```
+
 
 
