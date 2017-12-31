@@ -131,8 +131,8 @@ nspawn containers now also have a TasksMax value set, with a default of 16384.
 
 上面的描述，说明
 
-**对于登录会话，有个默认的限制UserTasksMax，配置在/etc/systemd/logind.conf，限制了某个用户的总的任务数(线程数)  
-**对于服务来说，配置在/etc/systemd/system.conf的DefaultTasksMax参数，默认是512(不同的发行版很可能不一样)，如果需要定制，需要根据服务独立配置  
+**对于登录会话，有个默认的限制UserTasksMax，配置在/etc/systemd/logind.conf，限制了某个用户的总的任务数(线程数)**  
+对于服务来说，配置在/etc/systemd/system.conf的DefaultTasksMax参数，默认是512(不同的发行版很可能不一样)，如果需要定制，需要根据服务独立配置  
 
 上面提到的是cgroup的默认全局设置，也可以细化都某个进程的限制。具体功能可以参考[Linux Cgroup系列（03）：限制cgroup的进程数（subsystem之pids）](https://segmentfault.com/a/1190000007468509)  
 
