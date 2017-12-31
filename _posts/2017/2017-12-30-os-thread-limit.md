@@ -102,6 +102,16 @@ echo 999999 > /proc/sys/vm/max_map_count
 sys.vm.max_map_count = 999999
 ```
 
+这个参数含义如下:
+
+```
+This file contains the maximum number of memory map areas a process may have. Memory map areas are used as a side-effect of calling malloc, directly by mmap and mprotect, and also when loading shared libraries.
+
+While most applications need less than a thousand maps, certain programs, particularly malloc debuggers, may consume lots of them, e.g., up to one or two maps per allocation.
+
+The default value is 65536.”
+```
+
 在其他资源可用的情况下，**单个vm能开启的最大线程数是这个值的一半**。不过这个限制不大理解，还得琢磨琢磨。下面是相关的描述:
 
 ```
