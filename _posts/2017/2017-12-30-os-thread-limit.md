@@ -28,13 +28,13 @@ Linux中创建进程用fork操作，线程用clone操作。通过ps -ef看到的
 
 下面是常见的问题原因：
 
-* 内存太小
+### 内存太小
 
 在Java中创建一个线程需要消耗一定的栈空间，默认的栈空间是1M(可以根据应用情况指定-Xss参数进行调整)，栈空间过小或递归调用过深，可能会出现StackOverflowError。
 
 对于一个进程来说，假设一定量可使用的内存，分配给堆空间的越多，留给栈空间的就越少。这个限制常见于**32位Java应用**，进程空间4G，用户空间2G(Linux下3G，所以通常堆可以设置更大一些)，减去堆空间大小(通过-Xms、-Xmx指定范围)，减去非堆空间(其中永久代部分通过PermSize、MaxPermSize指定大小，在Java8换成了MetaSpace，默认不限制大小)，再减去虚拟机自身消耗，剩下的就是栈空间，假设剩下300M，那么理论上就限制了只能开300线程。不过对于64位应用，由于进程空间近乎无限大，所以可以不考虑这个问题。
 
-* ulimit限制
+### ulimit限制
 
 线程数还会受到系统限制，系统限制通过ulimit -a可以查看到。
 
@@ -70,7 +70,7 @@ virtual memory - 虚拟内存限制，在64位系统上通常都设置成unlimit
 这些参数可以通过ulimit命令(当前用户临时生效)或者配置文件/etc/security/limits.conf(永久生效)进行修改。  
 检查某个进程的限制是否生效，可以通过/proc/PID/limits查看运行时状态。
 
-* 参数sys.kernel.threads-max限制
+### 参数sys.kernel.threads-max限制
 
 https://www.kernel.org/doc/Documentation/sysctl/kernel.txt
 ```
@@ -101,7 +101,7 @@ echo 999999 > /proc/sys/kernel/threads-max
 sys.kernel.threads-max = 999999
 ```
 
-* 参数sys.kernel.pid_max限制
+### 参数sys.kernel.pid_max限制
 
 https://www.kernel.org/doc/Documentation/sysctl/kernel.txt
 ```
@@ -119,7 +119,7 @@ echo 999999 > /proc/sys/kernel/pid_max
 sys.kernel.pid_max = 999999
 ```
 
-* 参数sys.vm.max_map_count限制
+### 参数sys.vm.max_map_count限制
 
 https://www.kernel.org/doc/Documentation/sysctl/vm.txt
 ```
@@ -153,7 +153,7 @@ by JavaThread::create_stack_guard_pages(), and it calls os::guard_memory().
 In Linux, this function is mprotect(). 
 ```
 
-* cgroup限制
+### cgroup限制
 
 现在新点的操作系统采用systemd的init程序，支持cgroup控制特性。docker的资源隔离底层技术就是这个。
 
