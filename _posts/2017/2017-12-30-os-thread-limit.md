@@ -38,6 +38,7 @@ Linux中创建进程用fork操作，线程用clone操作。通过ps -ef看到的
 
 线程数还会受到系统限制，系统限制通过ulimit -a可以查看到。
 
+https://ss64.com/bash/ulimit.html
 ```
 caixj@Lenovo-PC:~$ ulimit -a
 core file size          (blocks, -c) 0
@@ -71,6 +72,26 @@ virtual memory - 虚拟内存限制，在64位系统上通常都设置成unlimit
 
 * 参数sys.kernel.threads-max限制
 
+https://www.kernel.org/doc/Documentation/sysctl/kernel.txt
+```
+This value controls the maximum number of threads that can be created
+using fork().
+
+During initialization the kernel sets this value such that even if the
+maximum number of threads is created, the thread structures occupy only
+a part (1/8th) of the available RAM pages.
+
+The minimum value that can be written to threads-max is 20.
+The maximum value that can be written to threads-max is given by the
+constant FUTEX_TID_MASK (0x3fffffff).
+If a value outside of this range is written to threads-max an error
+EINVAL occurs.
+
+The value written is checked against the available RAM pages. If the
+thread structures would occupy too much (more than 1/8th) of the
+available RAM pages threads-max is reduced accordingly.
+```
+
 表示系统全局的总线程数限制。设置方式有:
 
 ```
@@ -81,6 +102,13 @@ sys.kernel.threads-max = 999999
 ```
 
 * 参数sys.kernel.pid_max限制
+
+https://www.kernel.org/doc/Documentation/sysctl/kernel.txt
+```
+PID allocation wrap value.  When the kernel's next PID value
+reaches this value, it wraps back to a minimum PID value.
+PIDs of value pid_max or larger are not allocated.
+```
 
 表示系统全局的PID号数值的限制。设置方式有:
 
@@ -93,6 +121,20 @@ sys.kernel.pid_max = 999999
 
 * 参数sys.vm.max_map_count限制
 
+https://www.kernel.org/doc/Documentation/sysctl/vm.txt
+```
+This file contains the maximum number of memory map areas a process
+may have. Memory map areas are used as a side-effect of calling
+malloc, directly by mmap, mprotect, and madvise, and also when loading
+shared libraries.
+
+While most applications need less than a thousand maps, certain
+programs, particularly malloc debuggers, may consume lots of them,
+e.g., up to one or two maps per allocation.
+
+The default value is 65536.
+```
+
 表示单个程序所能使用虚拟内存映射数量的限制。设置方式有:
 
 ```
@@ -100,16 +142,6 @@ sys.kernel.pid_max = 999999
 echo 999999 > /proc/sys/vm/max_map_count
 # 方式2 修改/etc/sysctl.conf，永久生效
 sys.vm.max_map_count = 999999
-```
-
-这个参数含义如下:
-
-```
-This file contains the maximum number of memory map areas a process may have. Memory map areas are used as a side-effect of calling malloc, directly by mmap and mprotect, and also when loading shared libraries.
-
-While most applications need less than a thousand maps, certain programs, particularly malloc debuggers, may consume lots of them, e.g., up to one or two maps per allocation.
-
-The default value is 65536.”
 ```
 
 在其他资源可用的情况下，**单个vm能开启的最大线程数是这个值的一半**。不过这个限制不大理解，还得琢磨琢磨。下面是相关的描述:
