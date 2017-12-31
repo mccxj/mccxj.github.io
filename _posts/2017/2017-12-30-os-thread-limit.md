@@ -66,7 +66,8 @@ max user processes - 每用户总的最大进程数(包括线程)
 virtual memory - 虚拟内存限制，在64位系统上通常都设置成unlimited 
 ```
 
-这些参数可以通过ulimit命令(当前用户临时生效)或者配置文件/etc/security/limits.conf(永久生效)进行修改。
+这些参数可以通过ulimit命令(当前用户临时生效)或者配置文件/etc/security/limits.conf(永久生效)进行修改。  
+检查某个进程的限制是否生效，可以通过/proc/PID/limits查看运行时状态。
 
 * 参数sys.kernel.threads-max限制
 
@@ -101,7 +102,7 @@ echo 999999 > /proc/sys/vm/max_map_count
 sys.vm.max_map_count = 999999
 ```
 
-在其他资源可用的情况下，单个vm能开启的最大线程数是这个值的一半。
+在其他资源可用的情况下，**单个vm能开启的最大线程数是这个值的一半**。不过这个限制不大理解，还得琢磨琢磨。下面是相关的描述:
 
 ```
 Attempt to protect stack guard pages failed.
@@ -110,9 +111,11 @@ by JavaThread::create_stack_guard_pages(), and it calls os::guard_memory().
 In Linux, this function is mprotect(). 
 ```
 
-# cgroup限制
+* cgroup限制
 
-例如suse sp2的发行说明，见https://www.suse.com/releasenotes/x86_64/SUSE-SLES/12-SP2/#fate-320358
+现在新点的操作系统采用systemd的init程序，支持cgroup控制特性。docker的资源隔离底层技术就是这个。
+
+其中有个重要的限制就是最大任务数TasksMax,通过设置cgroup的pids.max来限制。例如suse sp2的发行说明，见https://www.suse.com/releasenotes/x86_64/SUSE-SLES/12-SP2/#fate-320358 
 
 ```
 If you notice regressions, you can change a number of TasksMax settings.
@@ -125,4 +128,13 @@ Similarly, you can limit the total number of processes or tasks each user can ow
 
 nspawn containers now also have a TasksMax value set, with a default of 16384.
 ```
+
+上面的描述，说明
+
+**对于登录会话，有个默认的限制UserTasksMax，配置在/etc/systemd/logind.conf，限制了某个用户的总的任务数(线程数)  
+**对于服务来说，配置在/etc/systemd/system.conf的DefaultTasksMax参数，默认是512(不同的发行版很可能不一样)，如果需要定制，需要根据服务独立配置  
+
+上面提到的是cgroup的默认全局设置，也可以细化都某个进程的限制。具体功能可以参考[Linux Cgroup系列（03）：限制cgroup的进程数（subsystem之pids）](https://segmentfault.com/a/1190000007468509)  
+
+要查看某个进程的具体限制，可以通过/proc/PID/cgroup查看运行时状态，其中里边有pids.max就是对应的限制目录。
 
