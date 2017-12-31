@@ -19,6 +19,7 @@ Linux中创建进程用fork操作，线程用clone操作。通过ps -ef看到的
 用top命令的话，通过H开关也可以切换到线程视图。
 
 具体到Java线程模型，规范是没有规定Java线程和系统线程的对应关系的，不过目前常见的实现是一对一的。
+参考http://openjdk.java.net/groups/hotspot/docs/RuntimeOverview.html#Thread%20Management|outline
 
 ## 问题排查思路
 
@@ -135,7 +136,7 @@ e.g., up to one or two maps per allocation.
 The default value is 65536.
 ```
 
-表示单个程序所能使用虚拟内存映射数量的限制。设置方式有:
+表示单个程序所能使用内存映射空间的数量限制。设置方式有:
 
 ```
 # 方式1 运行时限制,临时生效
@@ -144,7 +145,7 @@ echo 999999 > /proc/sys/vm/max_map_count
 sys.vm.max_map_count = 999999
 ```
 
-在其他资源可用的情况下，**单个vm能开启的最大线程数是这个值的一半**。不过这个限制不大理解，还得琢磨琢磨。下面是相关的描述:
+在其他资源可用的情况下，**单个vm能开启的最大线程数是这个值的一半**，可以通过cat /proc/PID/maps | wc -l查看目前使用的映射数量。不过为什么是一半不大理解，还得琢磨琢磨。下面是相关的描述:
 
 ```
 Attempt to protect stack guard pages failed.
