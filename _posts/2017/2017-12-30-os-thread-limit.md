@@ -145,7 +145,8 @@ echo 999999 > /proc/sys/vm/max_map_count
 sys.vm.max_map_count = 999999
 ```
 
-在其他资源可用的情况下，**单个vm能开启的最大线程数是这个值的一半**，可以通过***cat /proc/PID/maps | wc -l***查看目前使用的映射数量。不过为什么是一半不大理解，还得琢磨琢磨。下面是相关的描述:
+在其他资源可用的情况下，**单个vm能开启的最大线程数是这个值的一半**，可以通过**cat /proc/PID/maps 
+\| wc -l**查看目前使用的映射数量。不过为什么是一半不大理解，还得琢磨琢磨。下面是相关的描述:
 
 ```
 Attempt to protect stack guard pages failed.
