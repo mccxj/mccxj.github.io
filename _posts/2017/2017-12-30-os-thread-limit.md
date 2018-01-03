@@ -146,14 +146,21 @@ sys.vm.max_map_count = 999999
 ```
 
 在其他资源可用的情况下，**单个vm能开启的最大线程数是这个值的一半**，可以通过**cat /proc/PID/maps 
-\| wc -l**查看目前使用的映射数量。不过为什么是一半不大理解，还得琢磨琢磨。下面是相关的描述:
+\| wc -l**查看目前使用的映射数量。
+
+至于为什么只有一半，结合一些材料和源码分析了一下:
+
+常见的警告信息是这样的，见JavaThread::create_stack_guard_pages()
 
 ```
 Attempt to protect stack guard pages failed.
-and OpenJDK 64-Bit Server VM warning: Attempt to deallocate stack guard pages failed. error messages are emitted
-by JavaThread::create_stack_guard_pages(), and it calls os::guard_memory(). 
-In Linux, this function is mprotect(). 
+Attempt to deallocate stack guard pages failed. 
 ```
+
+* JavaThread::create_stack_guard_pages()首先会调用os::create_stack_guard_pages()，它继续调用os::commit_memory()，这个方法会调用mmap进行匿名内存映射。
+* 成功之后会调用os::guard_memory()，它继续调用os::linux_mprotect()，这个方法会调用mprotect设置内存区域的保护属性。
+
+mmap和mprotect都会消耗1次VMA，所以一个线程创建得消耗2次VMA，所以最大值只能有一半。
 
 ### cgroup限制
 
