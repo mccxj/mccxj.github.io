@@ -64,3 +64,13 @@ disqus_show_comment_count: true
 
 # Google Analytics
 google_analytics: "UA-111877730-1"
+
+# Jekyll Feed
+feed:
+  path: atom.xml
+
+# Jekyll Avatar
+jekyll_avatar:
+  enable: true
+  avatar: mccxj
+  size: 100
