@@ -30,8 +30,7 @@ type astViewer struct {
 
 // Enter implements ast.Visitor interface.
 func (av *astViewer) Enter(inNode ast.Node) (outNode ast.Node, skipChildren bool) {
-	strings.Repeat("  ", av.level)
-	fmt.Println(reflect.TypeOf(inNode))
+	fmt.Println(strings.Repeat("  ", av.level), reflect.TypeOf(inNode))
 	av.level++
 	return inNode, false
 }
