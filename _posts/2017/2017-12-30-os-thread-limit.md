@@ -157,10 +157,44 @@ Attempt to protect stack guard pages failed.
 Attempt to deallocate stack guard pages failed. 
 ```
 
-* JavaThread::create_stack_guard_pages()首先会调用os::create_stack_guard_pages()，它继续调用os::commit_memory()，这个方法会调用mmap进行匿名内存映射。
-* 成功之后会调用os::guard_memory()，它继续调用os::linux_mprotect()，这个方法会调用mprotect设置内存区域的保护属性。
+见current_stack_region()的图示，结合一下R大的相关解释:http://hllvm.group.iteye.com/group/topic/37717
 
-mmap和mprotect都会消耗1次VMA，所以一个线程创建得消耗2次VMA，所以最大值只能有一半。
+如下图所示，通常的Java线程，会包括一个glibc的guard page和HotSpot的guard pages，其中JavaThread::create_stack_guard_pages()就是创建HotSpot Guard Pages用的，这里正常应该会有2次VMA，所以最大值只能有一半。
+
+```
+// Java thread:
+//
+//   Low memory addresses
+//    +------------------------+
+//    |                        |\  JavaThread created by VM does not have glibc
+//    |    glibc guard page    | - guard, attached Java thread usually has
+//    |                        |/  1 page glibc guard.
+// P1 +------------------------+ Thread::stack_base() - Thread::stack_size()
+//    |                        |\
+//    |  HotSpot Guard Pages   | - red and yellow pages
+//    |                        |/
+//    +------------------------+ JavaThread::stack_yellow_zone_base()
+//    |                        |\
+//    |      Normal Stack      | -
+//    |                        |/
+// P2 +------------------------+ Thread::stack_base()
+//
+// Non-Java thread:
+//
+//   Low memory addresses
+//    +------------------------+
+//    |                        |\
+//    |  glibc guard page      | - usually 1 page
+//    |                        |/
+// P1 +------------------------+ Thread::stack_base() - Thread::stack_size()
+//    |                        |\
+//    |      Normal Stack      | -
+//    |                        |/
+// P2 +------------------------+ Thread::stack_base()
+//
+// ** P1 (aka bottom) and size ( P2 = P1 - size) are the address and stack size returned from
+//    pthread_attr_getstack()
+```
 
 ### cgroup限制
 
