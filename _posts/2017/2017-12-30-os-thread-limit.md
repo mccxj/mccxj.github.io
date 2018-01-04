@@ -159,7 +159,7 @@ Attempt to deallocate stack guard pages failed.
 
 见current_stack_region()的图示，结合一下R大的相关解释:http://hllvm.group.iteye.com/group/topic/37717
 
-如下图所示，通常的Java线程，会包括一个glibc的guard page和HotSpot的guard pages，其中JavaThread::create_stack_guard_pages()就是创建HotSpot Guard Pages用的，这里正常应该会有2次VMA，所以最大值只能有一半。
+如下图所示，通常的Java线程，会包括一个glibc的guard page和HotSpot的guard pages，其中JavaThread::create_stack_guard_pages()就是创建HotSpot Guard Pages用的，这里正常应该会有2次VMA，所以最大值只能有一半，从/proc/PID/maps中也可以看到增加一个线程会增加2个地址相连的映射空间。
 
 ```
 // Java thread:
