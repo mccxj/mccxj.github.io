@@ -62,6 +62,9 @@ default_asides: [asides/recent_posts.html]
 disqus_short_name: mccxj
 disqus_show_comment_count: true
 
+# Livere Comments
+livere_uid: MTAyMC8zMjk4Ni85NTQ4
+
 # Google Analytics
 google_analytics: "UA-111877730-1"
 
